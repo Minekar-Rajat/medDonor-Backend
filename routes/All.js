@@ -3,6 +3,7 @@ var bodyparser = require('body-parser');
 var User = require('../models/users');
 var Donor = require('../models/donor');
 var Needy = require('../models/needy');
+var cors = require('./cors');
 
 var Allrouter = express.Router();
 Allrouter.use(bodyparser.json());
@@ -10,7 +11,8 @@ Allrouter.use(bodyparser.json());
 
 
 Allrouter.route('/')
-    .get((req, res, next) => {
+    .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+    .get(cors.cors, (req, res, next) => {
         console.log("Request for all");
         var result = [];
         Donor.find({})
@@ -31,15 +33,15 @@ Allrouter.route('/')
 
 
     })
-    .post((req, res, next) => {
+    .post(cors.corsWithOptions, (req, res, next) => {
         res.statusCode = 403;
         res.end("POST Operation is not supported !");
     })
-    .put((req, res, next) => {
+    .put(cors.corsWithOptions, (req, res, next) => {
         res.statusCode = 403;
         res.end("PUT Operation is not supported !");
     })
-    .delete((req, res, next) => {
+    .delete(cors.corsWithOptions, (req, res, next) => {
         var response = [];
         Donor.remove({})
             .then(resp => {

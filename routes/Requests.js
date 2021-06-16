@@ -3,11 +3,13 @@ var reqRouter = express.Router();
 var User = require('../models/users');
 var Needy = require('../models/needy');
 var authenticate = require('../authenticate');
+var cors = require('./cors');
 
 
 
 reqRouter.route('/')
-    .get(authenticate.verifyUser, (req, res, next) => {
+    .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+    .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
         console.log("Request for Needy");
         Needy.find({})
             .populate('user')
@@ -18,7 +20,7 @@ reqRouter.route('/')
             }, err => next(err))
             .catch((err) => next(err));
     })
-    .post((req, res, next) => {
+    .post(cors.corsWithOptions, (req, res, next) => {
         Needy.create(req.body)
             .then((needy) => {
                 console.log("Needy is created");
@@ -29,11 +31,11 @@ reqRouter.route('/')
             }, err => next(err))
             .catch(err => next(err));
     })
-    .put((req, res, next) => {
+    .put(cors.corsWithOptions, (req, res, next) => {
         res.statusCode = 403;
         res.end("PUT Operation is not supported !");
     })
-    .delete((req, res, next) => {
+    .delete(cors.corsWithOptions, (req, res, next) => {
         Needy.remove({})
             .then((resp) => {
                 res.statusCode = 200;
@@ -44,7 +46,8 @@ reqRouter.route('/')
     });
 
 reqRouter.route('/:reqID')
-    .get((req, res, next) => {
+    .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
+    .get(cors.cors, (req, res, next) => {
         console.log("Request for Needy");
         Needy.findById(req.params.reqID)
             .populate('user')
@@ -55,7 +58,7 @@ reqRouter.route('/:reqID')
             }, err => next(err))
             .catch((err) => next(err));
     })
-    .put((req, res, next) => {
+    .put(cors.corsWithOptions, (req, res, next) => {
         Needy.findByIdAndUpdate(req.params.reqID, { $set: req.body }, { new: true })
             .then((needy) => {
                 console.log("Needy is updated");
@@ -66,11 +69,11 @@ reqRouter.route('/:reqID')
             }, err => next(err))
             .catch(err => next(err));
     })
-    .post((req, res, next) => {
+    .post(cors.corsWithOptions, (req, res, next) => {
         res.statusCode = 403;
         res.end("POST Operation is not supported !");
     })
-    .delete((req, res, next) => {
+    .delete(cors.corsWithOptions, (req, res, next) => {
         Needy.findByIdAndRemove(req.params.reqID)
             .then((resp) => {
                 res.statusCode = 200;
