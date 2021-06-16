@@ -3,7 +3,7 @@ var donationRouter = express.Router();
 var User = require('../models/users');
 var Donor = require('../models/donor');
 var cors = require('./cors');
-
+var authenticate = require('../authenticate');
 
 donationRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
@@ -18,7 +18,7 @@ donationRouter.route('/')
             }, err => next(err))
             .catch((err) => next(err));
     })
-    .post(cors.corsWithOptions, (req, res, next) => {
+    .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Donor.create(req.body)
             .then((donor) => {
                 console.log("Donor is created");
@@ -29,11 +29,11 @@ donationRouter.route('/')
             }, err => next(err))
             .catch(err => next(err));
     })
-    .put(cors.corsWithOptions, (req, res, next) => {
+    .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         res.statusCode = 403;
         res.end("PUT Operation is not supported !");
     })
-    .delete(cors.corsWithOptions, (req, res, next) => {
+    .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Donor.remove({})
             .then((resp) => {
                 res.statusCode = 200;
@@ -58,7 +58,7 @@ donationRouter.route('/:donorID')
             }, err => next(err))
             .catch((err) => next(err));
     })
-    .put(cors.corsWithOptions, (req, res, next) => {
+    .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Donor.findByIdAndUpdate(req.params.donorID, { $set: req.body }, { new: true })
             .then((donor) => {
                 console.log("Donor is updated");
@@ -69,11 +69,11 @@ donationRouter.route('/:donorID')
             }, err => next(err))
             .catch(err => next(err));
     })
-    .post(cors.corsWithOptions, (req, res, next) => {
+    .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         res.statusCode = 403;
         res.end("POST Operation is not supported !");
     })
-    .delete(cors.corsWithOptions, (req, res, next) => {
+    .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Donor.findByIdAndRemove(req.params.donorID)
             .then((resp) => {
                 res.statusCode = 200;

@@ -4,6 +4,7 @@ var User = require('../models/users');
 var Donor = require('../models/donor');
 var Needy = require('../models/needy');
 var cors = require('./cors');
+var authenticate = require('../authenticate');
 
 var Allrouter = express.Router();
 Allrouter.use(bodyparser.json());
@@ -33,15 +34,15 @@ Allrouter.route('/')
 
 
     })
-    .post(cors.corsWithOptions, (req, res, next) => {
+    .post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403;
         res.end("POST Operation is not supported !");
     })
-    .put(cors.corsWithOptions, (req, res, next) => {
+    .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403;
         res.end("PUT Operation is not supported !");
     })
-    .delete(cors.corsWithOptions, (req, res, next) => {
+    .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         var response = [];
         Donor.remove({})
             .then(resp => {

@@ -15,7 +15,7 @@ usersRouter.use(bodyParser.urlencoded({ extended: true }));
 
 usersRouter.route('/')
   .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
-  .get(cors.cors, (req, res, next) => {
+  .get(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     User.find({})
       .then((users) => {
         console.log("User is Retrived");
@@ -26,22 +26,23 @@ usersRouter.route('/')
       }, err => next(err))
       .catch(err => next(err));
   })
-  .post(cors.corsWithOptions, (req, res, next) => {
-    User.create(req.body)
-      .then((user) => {
-        console.log("User is created");
-        console.log(user);
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(user);
-      }, err => next(err))
-      .catch(err => next(err));
-  })
-  .put(cors.corsWithOptions, (req, res, next) => {
+  //-------------replacement signup
+  // .post(cors.corsWithOptions,authenticate.verifyUser, (req, res, next) => {
+  //   User.create(req.body)
+  //     .then((user) => {
+  //       console.log("User is created");
+  //       console.log(user);
+  //       res.statusCode = 200;
+  //       res.setHeader('Content-Type', 'application/json');
+  //       res.json(user);
+  //     }, err => next(err))
+  //     .catch(err => next(err));
+  // })
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("PUT Operation is not supported !");
   })
-  .delete(cors.corsWithOptions, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     User.remove({})
       .then((resp) => {
         res.statusCode = 200;
@@ -85,7 +86,7 @@ usersRouter.route('/login')
 
 usersRouter.route('/:userID')
   .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
-  .get(cors.cors, (req, res, next) => {
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.params.userID)
       .then((user) => {
         res.statusCode = 200;
@@ -94,7 +95,7 @@ usersRouter.route('/:userID')
       }, err => next(err))
       .catch((err) => next(err));
   })
-  .put(cors.corsWithOptions, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findByIdAndUpdate(req.params.userID, { $set: req.body }, { new: true })
       .then((user) => {
         console.log("Donor is updated");
@@ -105,11 +106,11 @@ usersRouter.route('/:userID')
       }, err => next(err))
       .catch(err => next(err));
   })
-  .post(cors.corsWithOptions, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST Operation is not supported !");
   })
-  .delete(cors.corsWithOptions, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findByIdAndRemove(req.params.userID)
       .then((resp) => {
         res.statusCode = 200;
@@ -122,7 +123,7 @@ usersRouter.route('/:userID')
 
 usersRouter.route('/:userID/request')
   .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
-  .get(cors.cors, (req, res, next) => {
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.params.userID)
       .then((user) => {
         Needy.find({ user: user._id })
@@ -136,7 +137,7 @@ usersRouter.route('/:userID/request')
       }, err => next(err))
       .catch((err) => next(err));
   })
-  .put(cors.corsWithOptions, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.params.userID)
       .then((user) => {
         Needy.findByIdAndUpdate(req.body.needyID, { $set: req.body.update }, { new: true })
@@ -150,11 +151,11 @@ usersRouter.route('/:userID/request')
       }, err => next(err))
       .catch(err => next(err));
   })
-  .post(cors.corsWithOptions, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST Operation is not supported !");
   })
-  .delete(cors.corsWithOptions, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.params.userID)
       .then((user) => {
         Needy.findByIdAndRemove(req.body.needyID)
@@ -173,7 +174,7 @@ usersRouter.route('/:userID/request')
 
 usersRouter.route('/:userID/donation')
   .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
-  .get(cors.cors, (req, res, next) => {
+  .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.params.userID)
       .then((user) => {
         Donor.find({ user: user._id })
@@ -187,7 +188,7 @@ usersRouter.route('/:userID/donation')
       }, err => next(err))
       .catch((err) => next(err));
   })
-  .put(cors.corsWithOptions, (req, res, next) => {
+  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.params.userID)
       .then((user) => {
         Donor.findByIdAndUpdate(req.body.donorID, { $set: req.body.update }, { new: true })
@@ -201,12 +202,12 @@ usersRouter.route('/:userID/donation')
       }, err => next(err))
       .catch(err => next(err));
   })
-  .post(cors.corsWithOptions, (req, res, next) => {
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("POST Operation is not supported !");
 
   })
-  .delete(cors.corsWithOptions, (req, res, next) => {
+  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findById(req.params.userID)
       .then((user) => {
         Donor.findByIdAndRemove(req.body.donorID)
