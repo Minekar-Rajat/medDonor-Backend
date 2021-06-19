@@ -18,26 +18,16 @@ usersRouter.route('/')
   .get(cors.cors, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     User.find({})
       .then((users) => {
-        console.log("User is Retrived");
-        console.log(users);
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(users);
       }, err => next(err))
       .catch(err => next(err));
   })
-  //-------------replacement signup
-  // .post(cors.corsWithOptions,authenticate.verifyUser, (req, res, next) => {
-  //   User.create(req.body)
-  //     .then((user) => {
-  //       console.log("User is created");
-  //       console.log(user);
-  //       res.statusCode = 200;
-  //       res.setHeader('Content-Type', 'application/json');
-  //       res.json(user);
-  //     }, err => next(err))
-  //     .catch(err => next(err));
-  // })
+  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+    res.statusCode = 403;
+    res.end("PUT Operation is not supported !");
+  })
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403;
     res.end("PUT Operation is not supported !");
@@ -98,7 +88,6 @@ usersRouter.route('/:userID')
   .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     User.findByIdAndUpdate(req.params.userID, { $set: req.body }, { new: true })
       .then((user) => {
-        console.log("Donor is updated");
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
         res.json(user);

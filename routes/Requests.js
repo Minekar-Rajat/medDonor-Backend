@@ -10,7 +10,6 @@ var cors = require('./cors');
 reqRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
     .get(cors.cors, (req, res, next) => {
-        console.log("Request for Needy");
         Needy.find({})
             .populate('user')
             .then((needys) => {
@@ -23,7 +22,6 @@ reqRouter.route('/')
     .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Needy.create(req.body)
             .then((needy) => {
-                console.log("Needy is created");
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(needy);
@@ -48,7 +46,6 @@ reqRouter.route('/')
 reqRouter.route('/:reqID')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
     .get(cors.cors, (req, res, next) => {
-        console.log("Request for Needy");
         Needy.findById(req.params.reqID)
             .populate('user')
             .then((needy) => {
@@ -61,7 +58,6 @@ reqRouter.route('/:reqID')
     .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Needy.findByIdAndUpdate(req.params.reqID, { $set: req.body }, { new: true })
             .then((needy) => {
-                console.log("Needy is updated");
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(needy);

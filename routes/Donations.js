@@ -8,7 +8,6 @@ var authenticate = require('../authenticate');
 donationRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
     .get(cors.cors, (req, res, next) => {
-        console.log("Request for Donations");
         Donor.find({})
             .populate('user')
             .then((donors) => {
@@ -21,7 +20,6 @@ donationRouter.route('/')
     .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Donor.create(req.body)
             .then((donor) => {
-                console.log("Donor is created");
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(donor);
@@ -48,7 +46,6 @@ donationRouter.route('/')
 donationRouter.route('/:donorID')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
     .get(cors.cors, (req, res, next) => {
-        console.log("Request for Donor");
         Donor.findById(req.params.donorID)
             .populate('user')
             .then((donor) => {
@@ -61,7 +58,6 @@ donationRouter.route('/:donorID')
     .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
         Donor.findByIdAndUpdate(req.params.donorID, { $set: req.body }, { new: true })
             .then((donor) => {
-                console.log("Donor is updated");
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(donor);
