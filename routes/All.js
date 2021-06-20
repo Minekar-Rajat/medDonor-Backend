@@ -14,7 +14,7 @@ Allrouter.use(bodyparser.json());
 Allrouter.route('/')
     .options(cors.corsWithOptions, (req, res) => { res.sendStatus(200); })
     .get(cors.cors, (req, res, next) => {
-        console.log("Request for all");
+
         var result = [];
         Donor.find({})
             .populate('user')

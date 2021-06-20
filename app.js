@@ -11,6 +11,7 @@ var usersRouter = require('./routes/users');
 var Allrouter = require('./routes/All');
 var reqRouter = require('./routes/Requests');
 var donationRouter = require('./routes/Donations');
+var uploadRouter = require('./routes/upload');
 var app = express();
 
 // view engine setup
@@ -31,7 +32,8 @@ const mongoose = require('mongoose');
 const connect = mongoose.connect(url, {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+  useUnifiedTopology: true
 });
 
 connect.then(() => {
@@ -50,6 +52,7 @@ app.use('/all', Allrouter);
 app.use('/request', reqRouter);
 app.use('/donation', donationRouter);
 app.use('/users', usersRouter);
+app.use('/imageUpload', uploadRouter);
 
 
 // catch 404 and forward to error handler
