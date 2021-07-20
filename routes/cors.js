@@ -6,12 +6,13 @@ const whitelist = ['http://localhost:3000'];
 
 var corsOptionDelegate = (req, callback) => {
     var corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
-        corsOptions = { origin: true };
-    }
-    else {
-        corsOptions = { origin: false };
-    }
+//     if (whitelist.indexOf(req.header('Origin')) !== -1) {
+//         corsOptions = { origin: true };
+//     }
+//     else {
+//         corsOptions = { origin: false };
+//     }
+    corsOptions = { origin: true };
     callback(null, corsOptions);
 };
 
