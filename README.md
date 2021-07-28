@@ -13,4 +13,3 @@ Developed a web-based application that provides a platform for donations and req
 <img src="https://github.com/Minekar-Rajat/medDonor-Backend/blob/main/meddonor-screenshot/create-request.png"  />
 <img src="https://github.com/Minekar-Rajat/medDonor-Backend/blob/main/meddonor-screenshot/create-donation.png"  />
 <img src="https://github.com/Minekar-Rajat/medDonor-Backend/blob/main/meddonor-screenshot/donation.png"  />
-<img src="https://github.com/Minekar-Rajat/medDonor-Backend/blob/main/meddonor-screenshot/create-profile.png"  />
